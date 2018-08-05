@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Azotova</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="what_do_you_find">What do you find?</string>
+    <string name="registration">registration</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="ok">Ok</string>
+    <string name="create_task">Create plan</string>
+    <string name="city">City</string>
+    <string name="time">Time</string>
+    <string name="error_empty_text_file">Invalid text</string>
+
+    <string name="gallery">Галерея</string>
+    <string name="camera">Камера</string>
+
+    <string name="permission_neverask">Дать разрешения вы можете в настройках телефона </string>
+    <string name="permission_camera_denied">Разрешения вы можете дать при нажатии на кнопку фото</string>
+    <string name="permission_camera_rationale">Для работы с камерой нужны разрешения</string>
+    <string name="permission_button_allow">Открыть</string>
+    <string name="permission_button_deny">Отложить</string>
+</resources>
