@@ -9,7 +9,7 @@ class Plan {
     var user: List<String>? = null
     var date: Long = 0
 
-    constructor() {}
+    constructor()
 
     constructor(title: String, description: String,
                 city: String, date: Long) {
