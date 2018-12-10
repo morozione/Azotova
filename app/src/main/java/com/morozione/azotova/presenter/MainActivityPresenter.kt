@@ -3,24 +3,22 @@ package com.morozione.azotova.presenter
 import com.morozione.azotova.database.PlanDao
 import com.morozione.azotova.database.UserDao
 import com.morozione.azotova.entity.Plan
-
 import io.reactivex.CompletableObserver
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 class MainActivityPresenter {
 
-    private val planDao: PlanDao
-    private val userDao: UserDao
+    private val planDao = PlanDao()
+    private val userDao = UserDao()
     private var mHome: MainActivityView.HomeView? = null
     private var mMessage: MainActivityView.MessageView? = null
 
-    init {
-        planDao = PlanDao()
-        userDao = UserDao()
-    }
+    private var allPlansLoading = false
+    private var userPlansLoading = false
 
     fun attach(mView: MainActivityView.HomeView) {
         this.mHome = mView
@@ -52,7 +50,7 @@ class MainActivityPresenter {
 
     fun getAllPlans() {
         planDao.allPlans
-                .buffer(1)
+                .buffer(100, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Observer<List<Plan>> {
@@ -60,18 +58,23 @@ class MainActivityPresenter {
 
                     override fun onNext(plans: List<Plan>) {
                         if (mHome != null)
-                            mHome!!.sendAllPlans(plans)
+                            mHome!!.sendAllPlans(plans, allPlansLoading)
+                        allPlansLoading = true
                     }
 
-                    override fun onError(e: Throwable) {}
+                    override fun onError(e: Throwable) {
+                        allPlansLoading = false
+                    }
 
-                    override fun onComplete() {}
+                    override fun onComplete() {
+                        allPlansLoading = false
+                    }
                 })
     }
 
     fun getPlansOfUser() {
         planDao.getPlansOfUser(userDao.currentUser!!.uid)
-                .buffer(1)
+                .buffer(100, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Observer<List<Plan>> {
@@ -81,15 +84,16 @@ class MainActivityPresenter {
 
                     override fun onNext(plans: List<Plan>) {
                         if (mMessage != null)
-                            mMessage!!.sendUserPlans(plans)
+                            mMessage!!.sendUserPlans(plans, userPlansLoading)
+                        userPlansLoading = true
                     }
 
                     override fun onError(e: Throwable) {
-
+                        userPlansLoading = false
                     }
 
                     override fun onComplete() {
-
+                        userPlansLoading = false
                     }
                 })
     }

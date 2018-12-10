@@ -9,26 +9,19 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import com.morozione.azotova.Constants
 import com.morozione.azotova.R
 import com.morozione.azotova.entity.Plan
 import com.morozione.azotova.presenter.MainActivityPresenter
 import com.morozione.azotova.presenter.MainActivityView
-import com.morozione.azotova.ui.actiity.DetailsPlanActivity
+import com.morozione.azotova.ui.activity.DetailsPlanActivity
 import com.morozione.azotova.ui.adapter.PlanAdapter
-
-import java.util.ArrayList
-
-import butterknife.BindView
-import butterknife.ButterKnife
+import java.util.*
 
 class HomeFragment : Fragment(), MainActivityView.HomeView, PlanAdapter.OnPlanClickListener {
 
-    @BindView(R.id.rv_list)
-    internal var rvList: RecyclerView? = null
-    @BindView(R.id.srl_refresh)
-    internal var srlRefresh: SwipeRefreshLayout? = null
+    private lateinit var rvList: RecyclerView
+    private lateinit var srlRefresh: SwipeRefreshLayout
 
     private var presenter: MainActivityPresenter? = null
     private val plans = ArrayList<Plan>()
@@ -37,11 +30,10 @@ class HomeFragment : Fragment(), MainActivityView.HomeView, PlanAdapter.OnPlanCl
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
-        ButterKnife.bind(this, rootView)
 
         presenter = MainActivityPresenter()
 
-        initView()
+        initView(rootView)
         setListeners()
 
         return rootView
@@ -60,28 +52,32 @@ class HomeFragment : Fragment(), MainActivityView.HomeView, PlanAdapter.OnPlanCl
 
     private fun loadData() {
         presenter!!.getAllPlans()
-        srlRefresh!!.isRefreshing = true
+        srlRefresh.isRefreshing = true
     }
 
     private fun setListeners() {
-        srlRefresh!!.setOnRefreshListener { presenter!!.getAllPlans() }
+        srlRefresh.setOnRefreshListener { presenter!!.getAllPlans() }
     }
 
-    fun initView() {
-        rvList!!.setHasFixedSize(true)
-        rvList!!.layoutManager = LinearLayoutManager(context)
+    fun initView(view: View) {
+
+        rvList = view.findViewById(R.id.rv_list)
+        srlRefresh = view.findViewById(R.id.srl_refresh)
+
+        rvList.setHasFixedSize(true)
+        rvList.layoutManager = LinearLayoutManager(context)
 
         adapter = PlanAdapter(plans)
         adapter!!.setOnPlanClickListener(this)
-        rvList!!.adapter = adapter
+        rvList.adapter = adapter
     }
 
-    override fun sendAllPlans(plans: List<Plan>) {
-        if (srlRefresh!!.isRefreshing)
+    override fun sendAllPlans(plans: List<Plan>, isLoading: Boolean) {
+        if (!isLoading)
             adapter!!.swapData(ArrayList())
 
         adapter!!.addData(plans)
-        srlRefresh!!.isRefreshing = false
+        srlRefresh.isRefreshing = false
     }
 
     override fun onPlanClick(plan: Plan) {

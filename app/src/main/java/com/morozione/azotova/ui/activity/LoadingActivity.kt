@@ -1,4 +1,4 @@
-package com.morozione.azotova.ui.actiity
+package com.morozione.azotova.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,26 +12,20 @@ import com.morozione.azotova.MainActivity
 import com.morozione.azotova.R
 import com.morozione.azotova.presenter.LoadingActivityPresenter
 import com.morozione.azotova.presenter.LoadingActivityView
+import com.morozione.azotova.utils.bind
 
-import butterknife.BindView
-import butterknife.ButterKnife
 
 class LoadingActivity : AppCompatActivity(), View.OnClickListener, LoadingActivityView {
-    @BindView(R.id.b_login)
-    internal var bLogin: Button? = null
-    @BindView(R.id.b_registration)
-    internal var bRegistration: Button? = null
-    @BindView(R.id.et_login)
-    internal var etLogin: EditText? = null
-    @BindView(R.id.et_password)
-    internal var etPassword: EditText? = null
+    private val bLogin by bind <Button>(R.id.b_login)
+    private val bRegistration by bind<Button>(R.id.b_registration)
+    private val etLogin by bind<EditText>(R.id.et_login)
+    private val etPassword by bind< EditText>(R.id.et_password)
 
     private var presenter: LoadingActivityPresenter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_loading)
-        ButterKnife.bind(this)
 
         presenter = LoadingActivityPresenter(this)
 

@@ -15,8 +15,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
 import com.github.clans.fab.FloatingActionButton
 import com.morozione.azotova.Constants
@@ -24,7 +22,7 @@ import com.morozione.azotova.R
 import com.morozione.azotova.entity.Plan
 import com.morozione.azotova.presenter.MainActivityPresenter
 import com.morozione.azotova.presenter.MainActivityView
-import com.morozione.azotova.ui.actiity.DetailsPlanActivity
+import com.morozione.azotova.ui.activity.DetailsPlanActivity
 import com.morozione.azotova.ui.adapter.PlanAdapter
 import com.morozione.azotova.ui.dialog.CreatePlanDialog
 import com.morozione.azotova.ui.dialog.DialogFactory
@@ -34,12 +32,9 @@ import java.util.*
 @RuntimePermissions
 class UserPlansFragment : Fragment(), MainActivityView.MessageView, CreatePlanDialog.OnCreatePlanListener, PlanAdapter.OnPlanClickListener {
 
-    @BindView(R.id.fab_create)
-    internal var fabCreate: FloatingActionButton? = null
-    @BindView(R.id.rv_list)
-    internal var rvList: RecyclerView? = null
-    @BindView(R.id.srl_refresh)
-    internal var srlRefresh: SwipeRefreshLayout? = null
+    private lateinit var mCreate: FloatingActionButton
+    private lateinit var mList: RecyclerView
+    private lateinit var mRefresh: SwipeRefreshLayout
 
     private var presenter: MainActivityPresenter? = null
     private val plans = ArrayList<Plan>()
@@ -49,47 +44,49 @@ class UserPlansFragment : Fragment(), MainActivityView.MessageView, CreatePlanDi
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_user_plans, container, false)
-        ButterKnife.bind(this, rootView)
 
         presenter = MainActivityPresenter()
-        initView()
+        initView(rootView)
         setListeners()
 
         return rootView
     }
 
-    private fun setListeners() {
-        rvList!!.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (dy > 0 && fabCreate!!.visibility == View.VISIBLE) {
-                    fabCreate!!.hide(true)
-                } else if (dy < 0 && fabCreate!!.visibility != View.VISIBLE) {
-                    fabCreate!!.show(true)
-                }
-            }
-        })
-        fabCreate!!.setOnClickListener {
-            val createPlanDialog = CreatePlanDialog()
-            createPlanDialog.setOnCreatePlanListener(this@UserPlansFragment)
-            if (fragmentManager != null)
-                createPlanDialog.show(fragmentManager!!, "create_task")
-        }
-        srlRefresh!!.setOnRefreshListener { presenter!!.getPlansOfUser() }
-    }
-
-    fun initView() {
-        rvList!!.setHasFixedSize(true)
-        rvList!!.layoutManager = LinearLayoutManager(context)
+    private fun initView(view: View) {
+        mCreate = view.findViewById(R.id.fab_create)
+        mList = view.findViewById(R.id.rv_list)
+        mRefresh= view.findViewById(R.id.srl_refresh)
+        mList.setHasFixedSize(true)
+        mList.layoutManager = LinearLayoutManager(context)
 
         adapter = PlanAdapter(plans)
         adapter!!.setOnPlanClickListener(this)
-        rvList!!.adapter = adapter
+        mList.adapter = adapter
     }
 
-    fun loadData() {
+    private fun setListeners() {
+        mList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0 && mCreate.visibility == View.VISIBLE) {
+                    mCreate.hide(true)
+                } else if (dy < 0 && mCreate.visibility != View.VISIBLE) {
+                    mCreate.show(true)
+                }
+            }
+        })
+        mCreate.setOnClickListener {
+            val createPlanDialog = CreatePlanDialog()
+            createPlanDialog.setOnCreatePlanListener(this@UserPlansFragment)
+            if (fragmentManager != null)
+                createPlanDialog.show(fragmentManager!!, CreatePlanDialog::class.java.simpleName)
+        }
+        mRefresh.setOnRefreshListener { presenter!!.getPlansOfUser() }
+    }
+
+    private fun loadData() {
         presenter!!.getPlansOfUser()
-        srlRefresh!!.isRefreshing = true
+        mRefresh.isRefreshing = true
     }
 
     override fun onResume() {
@@ -98,23 +95,18 @@ class UserPlansFragment : Fragment(), MainActivityView.MessageView, CreatePlanDi
         loadData()
     }
 
-    override fun onPause() {
-        super.onPause()
-        presenter!!.detach()
-    }
-
     override fun sendPlanResult(isSuccess: Boolean) {
         if (isSuccess) {
             loadData()
         }
     }
 
-    override fun sendUserPlans(plans: List<Plan>) {
-        if (srlRefresh!!.isRefreshing)
+    override fun sendUserPlans(plans: List<Plan>, isLoading: Boolean) {
+        if (!isLoading)
             adapter!!.swapData(ArrayList())
 
         adapter!!.addData(plans)
-        srlRefresh!!.isRefreshing = false
+        mRefresh.isRefreshing = false
     }
 
     override fun onPlanCreate(plan: Plan) {
