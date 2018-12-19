@@ -31,7 +31,10 @@ class PlanAdapter(private var plans: ArrayList<Plan>?) : RecyclerView.Adapter<Pl
     }
 
     override fun getItemCount(): Int {
-        return plans!!.size
+        plans?.let {
+            return it.size
+        }
+        return 0
     }
 
     fun swapData(plans: ArrayList<Plan>) {
@@ -45,25 +48,25 @@ class PlanAdapter(private var plans: ArrayList<Plan>?) : RecyclerView.Adapter<Pl
     }
 
     inner class ViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView) {
-        private val ivIcon: ImageView
-        private val tvTitle: TextView
-        private val tvDescription: TextView
-        private val tvCity: TextView
-        private val tvTime: TextView
+        private val mIcon: ImageView
+        private val mTitle: TextView
+        private val mDescription: TextView
+        private val mCity: TextView
+        private val mTime: TextView
 
         init {
-            ivIcon = rootView.findViewById(R.id.civ_icon)
-            tvTitle = rootView.findViewById(R.id.tv_title)
-            tvDescription = rootView.findViewById(R.id.tv_description)
-            tvCity = rootView.findViewById(R.id.tv_city)
-            tvTime = rootView.findViewById(R.id.tv_time)
+            mIcon = rootView.findViewById(R.id.icon)
+            mTitle = rootView.findViewById(R.id.title)
+            mDescription = rootView.findViewById(R.id.tv_description)
+            mCity = rootView.findViewById(R.id.city)
+            mTime = rootView.findViewById(R.id.time)
         }
 
         fun bind(plan: Plan) {
-            tvTitle.text = plan.title
-            tvDescription.text = plan.description
-            tvCity.text = plan.city
-            tvTime.text = Utils.getFullDate(plan.date)
+            mTitle.text = plan.title
+            mDescription.text = plan.description
+            mCity.text = plan.city
+            mTime.text = Utils.getFullDate(plan.date)
 
             itemView.setOnClickListener {
                 if (onPlanClickListener != null)

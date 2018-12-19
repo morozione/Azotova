@@ -9,8 +9,8 @@ import com.morozione.azotova.utils.BottomNavigationViewHelper
 import com.morozione.azotova.utils.bind
 
 class MainActivity : AppCompatActivity() {
-    private val navigation by bind<BottomNavigationView>(R.id.b_navigation)
-    private val vpContainer by bind<ViewPager>(R.id.vp_container)
+    private val navigation by bind<BottomNavigationView>(R.id.navigation)
+    private val vpContainer by bind<ViewPager>(R.id.pager_container)
 
     private lateinit var tabAdapter: TabAdapter
 
@@ -32,16 +32,13 @@ class MainActivity : AppCompatActivity() {
         navigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.i_home -> {
-                    tabAdapter.setSelectedItemPosition(1)
-                    vpContainer.currentItem = 0
+                    vpContainer.currentItem = TabAdapter.HOME_FRAGMENT_POSITION
                 }
                 R.id.i_message -> {
-                    tabAdapter.setSelectedItemPosition(1)
-                    vpContainer.currentItem = 1
+                    vpContainer.currentItem = TabAdapter.PERSON_FRAGMENT_POSITION
                 }
                 R.id.i_user -> {
-                    tabAdapter.setSelectedItemPosition(2)
-                    vpContainer.currentItem = 2
+                    vpContainer.currentItem = TabAdapter.USER_PLANS_FRAGMENT_POSITION
                 }
             }
             false
@@ -52,7 +49,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onPageSelected(position: Int) {
-                tabAdapter.setSelectedItemPosition(position)
                 navigation.menu.getItem(position).isChecked = true
             }
 

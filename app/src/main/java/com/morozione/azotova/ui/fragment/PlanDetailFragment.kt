@@ -20,12 +20,24 @@ import de.hdodenhof.circleimageview.CircleImageView
 class PlanDetailFragment : Fragment(), PlanDetailsView {
     private var presenter: PlanDetailsPresenter? = null
 
-    private var civImage: CircleImageView? = null
-    private var tvTitle: TextView? = null
-    private var tvDescription: TextView? = null
-    private var tvCity: TextView? = null
-    private var tvTime: TextView? = null
-    private var bJoin: Button? = null
+    private var mImage: CircleImageView? = null
+    private var mTitle: TextView? = null
+    private var mDescription: TextView? = null
+    private var mCity: TextView? = null
+    private var mTime: TextView? = null
+    private var mJoin: Button? = null
+
+    companion object {
+        fun getInstance(id: String): PlanDetailFragment {
+            val planDetailFragment = PlanDetailFragment()
+
+            val args = Bundle()
+            args.putString(Constants.EXTRA_ID, id)
+            planDetailFragment.arguments = args
+
+            return planDetailFragment
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -58,37 +70,22 @@ class PlanDetailFragment : Fragment(), PlanDetailsView {
     }
 
     private fun initView(rootView: View) {
-        civImage = rootView.findViewById(R.id.civ_icon)
-        tvTitle = rootView.findViewById(R.id.tv_title)
-        tvDescription = rootView.findViewById(R.id.tv_description)
-        tvCity = rootView.findViewById(R.id.tv_city)
-        tvTime = rootView.findViewById(R.id.tv_time)
-        bJoin = rootView.findViewById(R.id.b_join)
+        mImage = rootView.findViewById(R.id.icon)
+        mTitle = rootView.findViewById(R.id.title)
+        mDescription = rootView.findViewById(R.id.tv_description)
+        mCity = rootView.findViewById(R.id.city)
+        mTime = rootView.findViewById(R.id.time)
+        mJoin = rootView.findViewById(R.id.join)
     }
 
     private fun fillView(plan: Plan) {
-        tvTitle!!.text = plan.title
-        tvDescription!!.text = plan.description
-        tvCity!!.text = plan.city
-        tvTime!!.text = Utils.getFullDate(plan.date)
+        mTitle!!.text = plan.title
+        mDescription!!.text = plan.description
+        mCity!!.text = plan.city
+        mTime!!.text = Utils.getFullDate(plan.date)
     }
 
     override fun sendPlan(plan: Plan) {
         fillView(plan)
-    }
-
-    companion object {
-        private var planDetailFragment: PlanDetailFragment? = null
-
-        fun getInstance(id: String): PlanDetailFragment {
-            if (planDetailFragment == null)
-                planDetailFragment = PlanDetailFragment()
-
-            val args = Bundle()
-            args.putString(Constants.EXTRA_ID, id)
-            planDetailFragment!!.arguments = args
-
-            return planDetailFragment as PlanDetailFragment
-        }
     }
 }

@@ -15,7 +15,6 @@ import com.morozione.azotova.entity.Plan
 import com.morozione.azotova.ui.fragment.TimePickerFragment
 import com.morozione.azotova.utils.Utils
 import java.util.*
-import kotlin.math.min
 
 class CreatePlanDialog : DialogFragment() {
 
@@ -26,26 +25,26 @@ class CreatePlanDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): android.app.Dialog {
-        val rootView = LayoutInflater.from(context).inflate(R.layout.dialog_create_plan, null)
+        val mRootView = LayoutInflater.from(context).inflate(R.layout.dialog_create_plan, null)
         val calendar = Calendar.getInstance()
 
-        val tilTitle = rootView.findViewById<TextInputLayout>(R.id.til_title)
-        val etTitle = rootView.findViewById<EditText>(R.id.et_title)
-        val tilDescription = rootView.findViewById<TextInputLayout>(R.id.til_description)
-        val etDescription = rootView.findViewById<EditText>(R.id.et_description)
-        val tilCity = rootView.findViewById<TextInputLayout>(R.id.til_city)
-        val etCity = rootView.findViewById<EditText>(R.id.et_city)
-        val tilTime = rootView.findViewById<TextInputLayout>(R.id.til_time)
-        val etTime = rootView.findViewById<EditText>(R.id.et_time)
+        val mTitleContainer = mRootView.findViewById<TextInputLayout>(R.id.til_title)
+        val mTitle = mRootView.findViewById<EditText>(R.id.et_title)
+        val mDescriptionContainer = mRootView.findViewById<TextInputLayout>(R.id.til_description)
+        val mDescription = mRootView.findViewById<EditText>(R.id.et_description)
+        val mCityContainer = mRootView.findViewById<TextInputLayout>(R.id.til_city)
+        val mCity = mRootView.findViewById<EditText>(R.id.et_city)
+        val mTimeContainer = mRootView.findViewById<TextInputLayout>(R.id.til_time)
+        val mTime = mRootView.findViewById<EditText>(R.id.et_time)
 
         val builder = AlertDialog.Builder(context)
                 .setTitle(R.string.create_task)
-                .setView(rootView)
+                .setView(mRootView)
                 .setPositiveButton(R.string.ok) { _, _ ->
                     if (onCreatePlanListener != null) {
-                        val title = etTitle.text.toString()
-                        val description = etDescription.text.toString()
-                        val city = etCity.text.toString()
+                        val title = mTitle.text.toString()
+                        val description = mDescription.text.toString()
+                        val city = mCity.text.toString()
 
                         onCreatePlanListener!!.onPlanCreate(Plan(title,
                                 description, city, calendar.time.time))
@@ -53,47 +52,47 @@ class CreatePlanDialog : DialogFragment() {
                     }
                 }
 
-        etTime.setOnClickListener {
-            if (etTime.length() == 0) {
-                etTime.setText(" ")
+        mTime.setOnClickListener {
+            if (mTime.length() == 0) {
+                mTime.setText(" ")
             }
             val timePickerFragment = TimePickerFragment()
             timePickerFragment.setListener(TimePickerDialog.OnTimeSetListener { _, hour, minute ->
                 calendar.set(Calendar.HOUR_OF_DAY, hour)
                 calendar.set(Calendar.MINUTE, minute)
                 calendar.set(Calendar.SECOND, 0)
-                etTime.setText(Utils.getTime(calendar.timeInMillis))
+                mTime.setText(Utils.getTime(calendar.timeInMillis))
             })
-            timePickerFragment.show(fragmentManager!!, "TimePickerFragment")
+            timePickerFragment.show(fragmentManager!!, TimePickerFragment::class.java.simpleName)
         }
 
         val dialog = builder.create()
         dialog.setOnShowListener(object : DialogInterface.OnShowListener {
             override fun onShow(dialogInterface: DialogInterface) {
                 val button = (dialogInterface as AlertDialog).getButton(DialogInterface.BUTTON_POSITIVE)
-                if (etTitle.length() == 0) {
+                if (mTitle.length() == 0) {
                     button.isEnabled = false
-                    tilTitle.error = getString(R.string.error_empty_text_file)
+                    mTitleContainer.error = getString(R.string.error_empty_text_file)
                 }
-                if (etDescription.length() == 0) {
+                if (mDescription.length() == 0) {
                     button.isEnabled = false
-                    tilDescription.error = getString(R.string.error_empty_text_file)
+                    mDescriptionContainer.error = getString(R.string.error_empty_text_file)
                 }
-                if (etCity.length() == 0) {
+                if (mCity.length() == 0) {
                     button.isEnabled = false
-                    tilCity.error = getString(R.string.error_empty_text_file)
+                    mCityContainer.error = getString(R.string.error_empty_text_file)
                 }
 
-                etTitle.addTextChangedListener(object : TextWatcher {
+                mTitle.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
 
                     }
 
                     override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                        if (etTitle.length() == 0) {
-                            tilTitle.error = getString(R.string.error_empty_text_file)
+                        if (mTitle.length() == 0) {
+                            mTitleContainer.error = getString(R.string.error_empty_text_file)
                         } else {
-                            tilTitle.error = null
+                            mTitleContainer.error = null
                         }
                         button.isEnabled = checkOnEnableButton()
                     }
@@ -102,16 +101,16 @@ class CreatePlanDialog : DialogFragment() {
 
                     }
                 })
-                etDescription.addTextChangedListener(object : TextWatcher {
+                mDescription.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
 
                     }
 
                     override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                        if (etDescription.length() == 0) {
-                            tilDescription.error = getString(R.string.error_empty_text_file)
+                        if (mDescription.length() == 0) {
+                            mDescriptionContainer.error = getString(R.string.error_empty_text_file)
                         } else {
-                            tilDescription.error = null
+                            mDescriptionContainer.error = null
                         }
                         button.isEnabled = checkOnEnableButton()
                     }
@@ -120,16 +119,16 @@ class CreatePlanDialog : DialogFragment() {
 
                     }
                 })
-                etCity.addTextChangedListener(object : TextWatcher {
+                mCity.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
 
                     }
 
                     override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                        if (etCity.length() == 0) {
-                            tilCity.error = getString(R.string.error_empty_text_file)
+                        if (mCity.length() == 0) {
+                            mCityContainer.error = getString(R.string.error_empty_text_file)
                         } else {
-                            tilCity.error = null
+                            mCityContainer.error = null
                         }
                         button.isEnabled = checkOnEnableButton()
                     }
@@ -142,7 +141,7 @@ class CreatePlanDialog : DialogFragment() {
             }
 
             private fun checkOnEnableButton(): Boolean {
-                return etTitle.length() != 0 && etDescription.length() != 0 && etCity.length() != 0
+                return mTitle.length() != 0 && mDescription.length() != 0 && mCity.length() != 0
             }
         })
         return dialog

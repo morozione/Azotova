@@ -22,4 +22,5 @@
     <string name="permission_camera_rationale">Для работы с камерой нужны разрешения</string>
     <string name="permission_button_allow">Открыть</string>
     <string name="permission_button_deny">Отложить</string>
+    <string name="join">JOIN</string>
 </resources>

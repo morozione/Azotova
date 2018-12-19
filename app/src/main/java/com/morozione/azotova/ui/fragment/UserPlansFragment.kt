@@ -36,9 +36,10 @@ class UserPlansFragment : Fragment(), MainActivityView.MessageView, CreatePlanDi
     private lateinit var mList: RecyclerView
     private lateinit var mRefresh: SwipeRefreshLayout
 
-    private var presenter: MainActivityPresenter? = null
+    private lateinit var presenter: MainActivityPresenter
+    private lateinit var adapter: PlanAdapter
+
     private val plans = ArrayList<Plan>()
-    private var adapter: PlanAdapter? = null
     private var imageUri: Uri? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -53,14 +54,14 @@ class UserPlansFragment : Fragment(), MainActivityView.MessageView, CreatePlanDi
     }
 
     private fun initView(view: View) {
-        mCreate = view.findViewById(R.id.fab_create)
-        mList = view.findViewById(R.id.rv_list)
-        mRefresh= view.findViewById(R.id.srl_refresh)
+        mCreate = view.findViewById(R.id.create)
+        mList = view.findViewById(R.id.homes_list)
+        mRefresh = view.findViewById(R.id.refresh)
         mList.setHasFixedSize(true)
         mList.layoutManager = LinearLayoutManager(context)
 
         adapter = PlanAdapter(plans)
-        adapter!!.setOnPlanClickListener(this)
+        adapter.setOnPlanClickListener(this)
         mList.adapter = adapter
     }
 
@@ -81,17 +82,17 @@ class UserPlansFragment : Fragment(), MainActivityView.MessageView, CreatePlanDi
             if (fragmentManager != null)
                 createPlanDialog.show(fragmentManager!!, CreatePlanDialog::class.java.simpleName)
         }
-        mRefresh.setOnRefreshListener { presenter!!.getPlansOfUser() }
+        mRefresh.setOnRefreshListener { presenter.getPlansOfUser() }
     }
 
     private fun loadData() {
-        presenter!!.getPlansOfUser()
+        presenter.getPlansOfUser()
         mRefresh.isRefreshing = true
     }
 
     override fun onResume() {
         super.onResume()
-        presenter!!.attach(this)
+        presenter.attach(this)
         loadData()
     }
 
@@ -103,14 +104,14 @@ class UserPlansFragment : Fragment(), MainActivityView.MessageView, CreatePlanDi
 
     override fun sendUserPlans(plans: List<Plan>, isLoading: Boolean) {
         if (!isLoading)
-            adapter!!.swapData(ArrayList())
+            adapter.swapData(ArrayList())
 
-        adapter!!.addData(plans)
+        adapter.addData(plans)
         mRefresh.isRefreshing = false
     }
 
     override fun onPlanCreate(plan: Plan) {
-        presenter!!.insertPlan(plan)
+        presenter.insertPlan(plan)
     }
 
     override fun onPlanClick(plan: Plan) {

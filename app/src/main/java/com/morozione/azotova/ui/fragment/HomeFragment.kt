@@ -20,10 +20,10 @@ import java.util.*
 
 class HomeFragment : Fragment(), MainActivityView.HomeView, PlanAdapter.OnPlanClickListener {
 
-    private lateinit var rvList: RecyclerView
-    private lateinit var srlRefresh: SwipeRefreshLayout
+    private lateinit var mList: RecyclerView
+    private lateinit var mRefresh: SwipeRefreshLayout
 
-    private var presenter: MainActivityPresenter? = null
+    private lateinit var presenter: MainActivityPresenter
     private val plans = ArrayList<Plan>()
     private var adapter: PlanAdapter? = null
 
@@ -39,37 +39,36 @@ class HomeFragment : Fragment(), MainActivityView.HomeView, PlanAdapter.OnPlanCl
         return rootView
     }
 
+    private fun initView(view: View) {
+        mList = view.findViewById(R.id.homes_list)
+        mRefresh = view.findViewById(R.id.refresh)
+
+        mList.setHasFixedSize(true)
+        mList.layoutManager = LinearLayoutManager(context)
+
+        adapter = PlanAdapter(plans)
+        adapter!!.setOnPlanClickListener(this)
+        mList.adapter = adapter
+    }
+
+    private fun setListeners() {
+        mRefresh.setOnRefreshListener { presenter.getAllPlans() }
+    }
+
     override fun onResume() {
         super.onResume()
-        presenter!!.attach(this)
+        presenter.attach(this)
         loadData()
     }
 
     override fun onPause() {
         super.onPause()
-        presenter!!.detach()
+        presenter.detach()
     }
 
     private fun loadData() {
-        presenter!!.getAllPlans()
-        srlRefresh.isRefreshing = true
-    }
-
-    private fun setListeners() {
-        srlRefresh.setOnRefreshListener { presenter!!.getAllPlans() }
-    }
-
-    fun initView(view: View) {
-
-        rvList = view.findViewById(R.id.rv_list)
-        srlRefresh = view.findViewById(R.id.srl_refresh)
-
-        rvList.setHasFixedSize(true)
-        rvList.layoutManager = LinearLayoutManager(context)
-
-        adapter = PlanAdapter(plans)
-        adapter!!.setOnPlanClickListener(this)
-        rvList.adapter = adapter
+        presenter.getAllPlans()
+        mRefresh.isRefreshing = true
     }
 
     override fun sendAllPlans(plans: List<Plan>, isLoading: Boolean) {
@@ -77,7 +76,7 @@ class HomeFragment : Fragment(), MainActivityView.HomeView, PlanAdapter.OnPlanCl
             adapter!!.swapData(ArrayList())
 
         adapter!!.addData(plans)
-        srlRefresh.isRefreshing = false
+        mRefresh.isRefreshing = false
     }
 
     override fun onPlanClick(plan: Plan) {

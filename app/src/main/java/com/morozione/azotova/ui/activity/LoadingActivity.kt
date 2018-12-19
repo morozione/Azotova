@@ -16,10 +16,10 @@ import com.morozione.azotova.utils.bind
 
 
 class LoadingActivity : AppCompatActivity(), View.OnClickListener, LoadingActivityView {
-    private val bLogin by bind <Button>(R.id.b_login)
-    private val bRegistration by bind<Button>(R.id.b_registration)
-    private val etLogin by bind<EditText>(R.id.et_login)
-    private val etPassword by bind< EditText>(R.id.et_password)
+    private val bLogin by bind <Button>(R.id.login)
+    private val bRegistration by bind<Button>(R.id.registration)
+    private val etLogin by bind<EditText>(R.id.email)
+    private val etPassword by bind< EditText>(R.id.password)
 
     private var presenter: LoadingActivityPresenter? = null
 
@@ -35,8 +35,8 @@ class LoadingActivity : AppCompatActivity(), View.OnClickListener, LoadingActivi
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.b_login -> singIn()
-            R.id.b_registration -> singUp()
+            R.id.login -> singIn()
+            R.id.registration -> singUp()
         }
     }
 
