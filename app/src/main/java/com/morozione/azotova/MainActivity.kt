@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import com.morozione.azotova.core.PresenterStorage
+import com.morozione.azotova.presenter.MainActivityPresenter
 import com.morozione.azotova.ui.adapter.TabAdapter
 import com.morozione.azotova.utils.BottomNavigationViewHelper
 import com.morozione.azotova.utils.bind
@@ -18,8 +20,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initPresenter()
+
         initUI()
         setListeners()
+    }
+
+    private fun initPresenter() {
+        if (PresenterStorage.instance.getPresenter(MainActivityPresenter.TAG) == null)
+            PresenterStorage.instance.storagePresenter(MainActivityPresenter.TAG, MainActivityPresenter())
     }
 
     private fun initUI() {
@@ -56,5 +65,11 @@ class MainActivity : AppCompatActivity() {
 
             }
         })
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (isFinishing)
+            PresenterStorage.instance.clear(MainActivityPresenter.TAG)
     }
 }

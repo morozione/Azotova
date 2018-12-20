@@ -1,13 +1,17 @@
 package com.morozione.azotova.presenter
 
 import com.google.firebase.auth.FirebaseUser
+import com.morozione.azotova.core.Presenter
 import com.morozione.azotova.database.UserDao
-
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-class LoadingActivityPresenter(private var mView: LoadingActivityView?) {
+class LoadingActivityPresenter : Presenter {
+    companion object {
+        val TAG = LoadingActivityPresenter::class.java.simpleName
+    }
+    private var mView: LoadingActivityView? = null
     private val userDao = UserDao()
 
     private var disposable = CompositeDisposable()

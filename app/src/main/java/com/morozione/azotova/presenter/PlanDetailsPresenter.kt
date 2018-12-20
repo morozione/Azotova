@@ -1,16 +1,16 @@
 package com.morozione.azotova.presenter
 
+import com.morozione.azotova.core.Presenter
 import com.morozione.azotova.database.PlanDao
 import com.morozione.azotova.entity.Plan
-
-import io.reactivex.Observer
-import io.reactivex.Single
 import io.reactivex.SingleObserver
-import io.reactivex.SingleSource
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-class PlanDetailsPresenter {
+class PlanDetailsPresenter : Presenter {
+    companion object {
+        val TAG = PlanDetailsPresenter::class.java.simpleName
+    }
 
     private val planDao = PlanDao()
     private var mView: PlanDetailsView? = null

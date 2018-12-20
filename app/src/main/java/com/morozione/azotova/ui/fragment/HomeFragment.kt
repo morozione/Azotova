@@ -11,12 +11,15 @@ import android.view.View
 import android.view.ViewGroup
 import com.morozione.azotova.Constants
 import com.morozione.azotova.R
+import com.morozione.azotova.core.PresenterStorage
 import com.morozione.azotova.entity.Plan
+import com.morozione.azotova.presenter.LoadingActivityPresenter
 import com.morozione.azotova.presenter.MainActivityPresenter
 import com.morozione.azotova.presenter.MainActivityView
 import com.morozione.azotova.ui.activity.DetailsPlanActivity
 import com.morozione.azotova.ui.adapter.PlanAdapter
 import java.util.*
+import kotlin.jvm.internal.MagicApiIntrinsics
 
 class HomeFragment : Fragment(), MainActivityView.HomeView, PlanAdapter.OnPlanClickListener {
 
@@ -31,12 +34,16 @@ class HomeFragment : Fragment(), MainActivityView.HomeView, PlanAdapter.OnPlanCl
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
 
-        presenter = MainActivityPresenter()
+        initPresenter()
 
         initView(rootView)
         setListeners()
 
         return rootView
+    }
+
+    private fun initPresenter() {
+        presenter = PresenterStorage.instance.getPresenter(MainActivityPresenter.TAG) as MainActivityPresenter
     }
 
     private fun initView(view: View) {

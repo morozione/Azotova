@@ -7,14 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-
 import com.morozione.azotova.Constants
 import com.morozione.azotova.R
+import com.morozione.azotova.core.PresenterStorage
 import com.morozione.azotova.entity.Plan
 import com.morozione.azotova.presenter.PlanDetailsPresenter
 import com.morozione.azotova.presenter.PlanDetailsView
 import com.morozione.azotova.utils.Utils
-
 import de.hdodenhof.circleimageview.CircleImageView
 
 class PlanDetailFragment : Fragment(), PlanDetailsView {
@@ -43,12 +42,19 @@ class PlanDetailFragment : Fragment(), PlanDetailsView {
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_plan_detail, container, false)
 
-        presenter = PlanDetailsPresenter()
+        initPresenter()
 
         initView(rootView)
         loadData()
 
         return rootView
+    }
+
+    private fun initPresenter() {
+        if (PresenterStorage.instance.getPresenter(PlanDetailsPresenter.TAG) == null)
+            PresenterStorage.instance.storagePresenter(PlanDetailsPresenter.TAG, PlanDetailsPresenter())
+
+        presenter = PresenterStorage.instance.getPresenter(PlanDetailsPresenter.TAG) as PlanDetailsPresenter
     }
 
     override fun onStart() {
@@ -59,6 +65,11 @@ class PlanDetailFragment : Fragment(), PlanDetailsView {
     override fun onStop() {
         super.onStop()
         presenter!!.detach()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        PresenterStorage.instance.clear(PlanDetailsPresenter.TAG)
     }
 
     private fun loadData() {

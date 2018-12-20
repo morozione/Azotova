@@ -1,5 +1,6 @@
 package com.morozione.azotova.presenter
 
+import com.morozione.azotova.core.Presenter
 import com.morozione.azotova.database.PlanDao
 import com.morozione.azotova.database.UserDao
 import com.morozione.azotova.entity.Plan
@@ -11,7 +12,10 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
-class MainActivityPresenter {
+class MainActivityPresenter : Presenter {
+    companion object {
+        val TAG = MainActivityPresenter::class.java.simpleName
+    }
 
     private val planDao = PlanDao()
     private val userDao = UserDao()
